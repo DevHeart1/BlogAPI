@@ -1,8 +1,8 @@
 # Tech Stack Document: BlogAPI Backend
 
 **Version:** 1.0
-**Date:** May 24, 2025
-**Status:** Proposed
+**Date:** May 26, 2025
+**Status:** Finalized
 
 ## 1. Introduction
 
@@ -24,34 +24,32 @@ As BlogAPI is a backend-only project, this document focuses exclusively on serve
 
 ### 3.1. Programming Language
 
-*   **Proposed:** [Specify Language, e.g., Node.js (JavaScript/TypeScript), Python, Go, Java, Ruby]
-*   **Considerations & Rationale:**
-    *   **Node.js (JavaScript/TypeScript):** Excellent for I/O-bound applications, large ecosystem (npm), good support for both REST and GraphQL (e.g., with Express.js/NestJS and Apollo Server). TypeScript adds static typing for better maintainability.
-    *   **Python:** Strong for rapid development, mature frameworks (Django, Flask), good for data handling. Libraries like Graphene for GraphQL.
-    *   **Go:** High performance, excellent concurrency support, statically typed. Good for building microservices.
-    *   **Java:** Robust, mature ecosystem, strong for enterprise-level applications. Frameworks like Spring Boot.
-    *   **Ruby:** Developer-friendly, convention-over-configuration (Ruby on Rails).
-*   **Decision:** *(To be finalized after further evaluation or based on team expertise)*
+*   **Decision:** Node.js (TypeScript)
+*   **Rationale:**
+    *   TypeScript enhances JavaScript with static typing, improving code quality, maintainability, and developer productivity, which is crucial for a project like BlogAPI.
+    *   Node.js offers a vast ecosystem (npm) providing a rich set of libraries for various functionalities.
+    *   Its non-blocking I/O model is well-suited for building scalable and performant APIs, handling concurrent user requests efficiently.
+    *   Strong support for both REST and GraphQL API development, aligning with PRD requirements.
+    *   Team familiarity with JavaScript/TypeScript can accelerate development.
 
 ### 3.2. Backend Framework
 
-*   **Proposed:** [Based on Language Choice, e.g., Express.js/NestJS (Node.js), Django/Flask (Python), Gin (Go), Spring Boot (Java), Ruby on Rails (Ruby)]
-*   **Considerations & Rationale:**
-    *   The framework should provide robust routing, middleware support, and an easy way to structure the application.
-    *   It should have good support for building RESTful APIs and integrating GraphQL libraries.
-*   **Decision:** *(To be finalized)*
+*   **Decision:** NestJS (Node.js)
+*   **Rationale:**
+    *   NestJS is a progressive Node.js framework that uses TypeScript out-of-the-box, providing a structured and maintainable architecture inspired by Angular.
+    *   It offers built-in support for microservices, WebSockets, and GraphQL, making it versatile for future expansions.
+    *   Dependency injection, modularity, and decorators simplify development and testing.
+    *   Excellent documentation and a growing community.
+    *   Integrates well with TypeORM for database interactions and Apollo Server for GraphQL.
 
 ### 3.3. Database
 
-*   **Type:** Relational (SQL) or NoSQL
-*   **Proposed SQL:** [e.g., PostgreSQL, MySQL]
-    *   **Rationale:** Strong consistency, ACID properties, mature, good for structured data and complex relationships (users, posts, tags, comments, versions).
-*   **Proposed NoSQL:** [e.g., MongoDB (Document), Cassandra (Columnar)]
-    *   **Rationale:** Flexibility, scalability, good for unstructured or semi-structured data. MongoDB is often paired with Node.js applications.
-*   **ORM/ODM (Object-Relational/Document Mapper):**
-    *   **Proposed:** [e.g., Sequelize/TypeORM/Prisma (Node.js), SQLAlchemy (Python), GORM (Go), Hibernate (Java), ActiveRecord (Ruby)]
-    *   **Rationale:** Simplifies database interactions, provides an abstraction layer, helps prevent SQL injection.
-*   **Decision:** *(To be finalized based on data structure complexity, scalability needs, and team familiarity)*
+*   **Type:** Relational (SQL)
+*   **Decision (SQL):** PostgreSQL
+    *   **Rationale:** PostgreSQL is a powerful, open-source object-relational database system known for its reliability, feature robustness, and data integrity. It handles complex queries and relationships effectively, which is essential for features like post versioning, tags, and user roles. Its support for JSONB can also offer flexibility.
+*   **ORM (Object-Relational Mapper):**
+    *   **Decision:** TypeORM
+    *   **Rationale:** TypeORM is a mature ORM for TypeScript and JavaScript, supporting both Data Mapper and ActiveRecord patterns. It integrates seamlessly with NestJS and PostgreSQL, allowing developers to work with databases using TypeScript classes and decorators. It supports migrations, transactions, and a wide range of database features.
 
 ## 4. API Design & Implementation
 
@@ -63,21 +61,28 @@ As BlogAPI is a backend-only project, this document focuses exclusively on serve
 
 ### 4.2. GraphQL API
 
-*   **Core Library:** [e.g., Apollo Server (Node.js), Graphene (Python), graphql-go (Go), GraphQL Java (Java)]
+*   **Decision (Core Library):** Apollo Server
+    *   **Rationale:** Apollo Server is a widely-adopted, feature-rich GraphQL server for Node.js. It integrates seamlessly with NestJS (via `@nestjs/graphql` module) and TypeORM. It supports subscriptions, caching, and has excellent tooling (Apollo Studio, GraphQL Playground).
 *   **Schema Definition Language (SDL):** Standard GraphQL SDL will be used.
-*   **Tools:** GraphQL Playground or GraphiQL for schema exploration and testing.
+*   **Tools:** GraphQL Playground or GraphiQL for schema exploration and testing (often bundled with Apollo Server).
 
 ## 5. Authentication & Authorization
 
 *   **Mechanism:** JSON Web Tokens (JWT).
-*   **Libraries:** [e.g., `jsonwebtoken` (Node.js), `PyJWT` (Python)]
-*   **Password Hashing:** bcrypt or Argon2.
-*   **RBAC Implementation:** Custom logic within the application, mapping roles to permissions.
+    *   **Rationale:** JWTs are a standard, stateless, and secure method for API authentication. They allow for easy integration with various clients and can carry user role information for RBAC.
+*   **Libraries:**
+    *   **JWT Handling:** `jsonwebtoken` (Node.js)
+        *   **Rationale:** A popular and well-maintained library for signing and verifying JWTs in Node.js.
+    *   **Password Hashing:** `bcrypt`
+        *   **Rationale:** `bcrypt` is a strong, adaptive hashing algorithm specifically designed for passwords, providing protection against brute-force attacks.
+*   **RBAC Implementation:** Custom logic within the application, mapping roles to permissions, potentially leveraging NestJS Guards and decorators.
+    *   **Rationale:** Provides fine-grained control over access to different API resources and operations based on user roles.
 
 ## 6. Key Functionality Support
 
 *   **Markdown Parsing:**
-    *   **Library:** [e.g., `marked` or `markdown-it` (JavaScript), `Mistune` or `Python-Markdown` (Python)]
+    *   **Decision (Library):** `marked`
+    *   **Rationale:** `marked` is a popular, fast, and lightweight Markdown parser for JavaScript. It's easy to integrate and customize if needed.
 *   **Search:**
     *   **Initial:** Database-specific search capabilities (e.g., `LIKE` queries, Full-Text Search in PostgreSQL).
     *   **Advanced (Future):** Dedicated search engine like Elasticsearch or Algolia if needed.
@@ -89,7 +94,9 @@ As BlogAPI is a backend-only project, this document focuses exclusively on serve
 ### 7.1. Version Control
 
 *   **System:** Git
-*   **Hosting:** [e.g., GitHub, GitLab, Bitbucket]
+    *   **Rationale:** Git is the de-facto standard for version control, offering robust branching, merging, and history tracking capabilities.
+*   **Hosting:** GitHub
+    *   **Rationale:** GitHub provides excellent collaboration features, issue tracking, and integrates well with CI/CD tools like GitHub Actions. It's widely used and has a large community.
 
 ### 7.2. Containerization (Recommended)
 
@@ -99,19 +106,22 @@ As BlogAPI is a backend-only project, this document focuses exclusively on serve
 
 ### 7.3. CI/CD (Continuous Integration/Continuous Deployment)
 
-*   **Tools:** [e.g., GitHub Actions, GitLab CI/CD, Jenkins]
+*   **Decision (Tools):** GitHub Actions
+    *   **Rationale:** GitHub Actions offers a convenient way to automate software workflows directly within the GitHub repository. It's easy to set up for CI/CD pipelines, including linting, testing, building, and deploying applications.
 *   **Pipeline Stages:** Linting, testing (unit, integration), building, deploying.
 
 ### 7.4. Testing
 
-*   **Unit Testing Framework:** [e.g., Jest/Mocha (Node.js), PyTest/unittest (Python)]
-*   **Integration Testing:** Using testing framework with live or mocked dependencies.
-*   **API Testing Tools:** Postman, Newman, or custom scripts.
+*   **Decision (Unit Testing Framework):** Jest
+    *   **Rationale:** Jest is a popular testing framework for JavaScript/TypeScript, particularly within the Node.js ecosystem. It offers a simple API, built-in mocking capabilities, code coverage reports, and parallel test execution. It integrates well with NestJS.
+*   **Integration Testing:** Using Jest with live or mocked dependencies (e.g., using `supertest` for API endpoint testing).
+*   **API Testing Tools:** Postman, Newman, or custom scripts using libraries like `axios` or `fetch` within Jest.
 
 ### 7.5. Logging
 
-*   **Library:** [e.g., Winston/Pino (Node.js), standard `logging` module (Python)]
-*   **Format:** Structured logging (e.g., JSON) for easier parsing by log management systems.
+*   **Decision (Library):** Winston
+    *   **Rationale:** Winston is a versatile and widely used logging library for Node.js. It supports multiple transport options (console, file, databases, etc.), customizable log formats (including JSON), and different log levels.
+*   **Format:** Structured logging (JSON) for easier parsing by log management systems.
 *   **Log Management (Optional):** ELK Stack (Elasticsearch, Logstash, Kibana), Grafana Loki, Datadog.
 
 ### 7.6. Monitoring & Alerting
@@ -122,26 +132,52 @@ As BlogAPI is a backend-only project, this document focuses exclusively on serve
 ## 8. Environment Configuration
 
 *   **Method:** Environment variables (e.g., using `.env` files for local development, platform-provided environment variables in production).
-*   **Libraries:** [e.g., `dotenv` (Node.js)]
+    *   **Rationale:** Using environment variables is a standard practice for managing application configuration, ensuring that sensitive information (like API keys or database credentials) is not hardcoded into the codebase.
+*   **Libraries:** `dotenv` (Node.js)
+    *   **Rationale:** `dotenv` is a zero-dependency module that loads environment variables from a `.env` file into `process.env`, simplifying local development configuration. NestJS also has its own `@nestjs/config` module which often uses `dotenv` under the hood.
 
 ## 9. Security Considerations
 
-*   **Input Validation:** Libraries for validating request payloads (e.g., `Joi`, `class-validator` for Node.js).
+*   **Input Validation:** `class-validator` (often used with `class-transformer`)
+    *   **Rationale:** `class-validator` works seamlessly with NestJS and TypeScript. It uses decorator-based validation, making it easy to define validation rules directly on DTO (Data Transfer Object) classes, ensuring data integrity and security.
 *   **HTTPS:** Enforced for all API communication (handled by reverse proxy or load balancer in production).
 *   **Dependency Management:** Regular scanning for vulnerabilities in third-party libraries (e.g., `npm audit`, Snyk).
 *   **Rate Limiting:** Implemented at the API gateway level or within the application using libraries like `express-rate-limit` (Node.js).
 
 ## 10. Decision Summary & Justification
 
-*(This section will be filled in once final decisions are made for each component, along with a brief justification for each choice.)*
+This section summarizes the finalized technology choices for the BlogAPI backend project.
 
-*   **Programming Language:** [Chosen Language] - *Justification...*
-*   **Backend Framework:** [Chosen Framework] - *Justification...*
-*   **Database:** [Chosen Database] - *Justification...*
-*   **ORM/ODM:** [Chosen ORM/ODM] - *Justification...*
-*   **GraphQL Library:** [Chosen Library] - *Justification...*
-*   ...
+*   **Programming Language:** Node.js (TypeScript)
+    *   **Justification:** TypeScript enhances JavaScript with static typing, improving code quality and maintainability. Node.js offers a vast ecosystem (npm), non-blocking I/O for performance, and strong support for both REST and GraphQL, aligning with PRD requirements and team familiarity.
+*   **Backend Framework:** NestJS
+    *   **Justification:** NestJS provides a structured, TypeScript-first architecture, built-in support for microservices, GraphQL, and WebSockets. Its modularity, dependency injection, and integration with TypeORM and Apollo Server enhance developer productivity and maintainability.
+*   **Database:** PostgreSQL
+    *   **Justification:** PostgreSQL is a robust, open-source relational database known for reliability, data integrity, and handling complex queries, suitable for features like post versioning and RBAC.
+*   **ORM:** TypeORM
+    *   **Justification:** TypeORM is a mature ORM for TypeScript, integrating seamlessly with NestJS and PostgreSQL. It simplifies database interactions using TypeScript classes and supports migrations and transactions.
+*   **GraphQL Library:** Apollo Server
+    *   **Justification:** Apollo Server is a feature-rich GraphQL server for Node.js, integrating well with NestJS. It supports subscriptions, caching, and provides excellent tooling.
+*   **Authentication Libraries:**
+    *   **JWT Handling:** `jsonwebtoken`
+        *   **Justification:** A popular and well-maintained library for signing and verifying JWTs in Node.js.
+    *   **Password Hashing:** `bcrypt`
+        *   **Justification:** A strong, adaptive hashing algorithm for secure password storage.
+*   **Markdown Parsing Library:** `marked`
+    *   **Justification:** A popular, fast, and lightweight Markdown parser for JavaScript, easy to integrate.
+*   **Version Control Hosting:** GitHub
+    *   **Justification:** GitHub offers excellent collaboration features, issue tracking, and seamless integration with CI/CD tools like GitHub Actions.
+*   **CI/CD Tools:** GitHub Actions
+    *   **Justification:** Provides convenient automation for CI/CD pipelines directly within the GitHub repository.
+*   **Unit Testing Framework:** Jest
+    *   **Justification:** A popular testing framework for JavaScript/TypeScript, offering a simple API, mocking, code coverage, and good integration with NestJS.
+*   **Logging Library:** Winston
+    *   **Justification:** A versatile logging library for Node.js supporting multiple transports and customizable log formats.
+*   **Environment Configuration Library:** `dotenv`
+    *   **Justification:** Simplifies loading of environment variables from `.env` files for local development.
+*   **Input Validation Library:** `class-validator`
+    *   **Justification:** Works seamlessly with NestJS and TypeScript, using decorator-based validation for DTOs.
 
 ---
 
-This document is a living document and will be updated as technology decisions are finalized and the project evolves.
+This document reflects the finalized technology stack for the BlogAPI project as of the date specified.
